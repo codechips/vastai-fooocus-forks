@@ -1,8 +1,9 @@
 [tasks.build]
-description = "Build the Fooocus Plus Docker image locally"
+description = "Build a Fooocus fork Docker image locally"
 run = [
-    "echo '🔥 Building Fooocus Plus image...'",
-    "docker build -t vastai-fooocus-plus:local .",
+    "echo '🔥 Building Fooocus fork image...'",
+    "echo 'Note: This builds with default fork. Use build-fork for specific forks.'",
+    "docker build --build-arg FORK_REPO=mashb1t/Fooocus --build-arg FORK_COMMIT=main --build-arg FORK_NAME=mashb1t -t vastai-fooocus:local .",
     "echo '✅ Build completed successfully!'",
     "echo ''",
     "echo '🚀 To test the image run: mise run test'",
@@ -228,4 +229,75 @@ run = [
     "timeout 3600 docker build --progress=plain -t timeout-test:latest . || echo 'Build timed out after 1 hour'",
     "echo ''",
     "echo 'Check Docker logs for hanging point:'"
+]
+
+[tasks.lint]
+description = "Lint Dockerfile with hadolint"
+run = [
+    "echo '🔍 Linting Dockerfile with hadolint...'",
+    "hadolint Dockerfile",
+    "echo '✅ Dockerfile linting completed'"
+]
+
+[tasks.lint-fix]
+description = "Lint Dockerfile and show detailed explanations"
+run = [
+    "echo '🔧 Linting Dockerfile with detailed explanations...'",
+    "hadolint --no-color Dockerfile || true",
+    "echo ''",
+    "echo '📖 For rule explanations visit: https://github.com/hadolint/hadolint/wiki'"
+]
+
+# New modular build tasks for fork-specific Dockerfiles
+
+[tasks.build-base]
+description = "Build the shared base image"
+run = [
+    "echo '🔥 Building shared base image...'",
+    "docker build -f dockerfiles/base/Dockerfile -t fooocus-base:local .",
+    "echo '✅ Base image build completed!'"
+]
+
+[tasks.build-fork-new]
+description = "Build a specific fork using new modular approach (usage: FORK=mashb1t mise run build-fork-new)"
+run = [
+    "echo '🔥 Building specific Fooocus fork with modular Dockerfiles...'",
+    "echo 'Fork: ${FORK:-mashb1t}'",
+    "case ${FORK:-mashb1t} in",
+    "  mashb1t) REPO=mashb1t/Fooocus ;;",
+    "  ruined) REPO=runew0lf/RuinedFooocus ;;",
+    "  extended) REPO=shaitanzx/Fooocus_extend ;;",
+    "  mre) REPO=MoonRide303/Fooocus-MRE ;;",
+    "  base) echo 'Building base image only...' && mise run build-base && exit 0 ;;",
+    "  *) echo 'Unknown fork. Use: base, mashb1t, ruined, extended, or mre' && exit 1 ;;",
+    "esac",
+    "echo 'Repository: $REPO'",
+    "COMMIT=$(git ls-remote https://github.com/$REPO HEAD | cut -f1)",
+    "echo 'Latest commit: $COMMIT'",
+    "# First ensure base image exists",
+    "if ! docker image inspect fooocus-base:local >/dev/null 2>&1; then",
+    "  echo 'Building base image first...'",
+    "  mise run build-base",
+    "fi",
+    "docker build -f dockerfiles/${FORK:-mashb1t}/Dockerfile --build-arg FORK_COMMIT=$COMMIT --build-arg BASE_IMAGE=fooocus-base:local -t fooocus-${FORK:-mashb1t}:local .",
+    "echo '✅ Fork build completed!'"
+]
+
+[tasks.build-fork]
+description = "Build a specific Fooocus fork (LEGACY - usage: FORK=mashb1t mise run build-fork)"
+run = [
+    "echo '🔥 Building specific Fooocus fork...'",
+    "echo 'Fork: ${FORK:-mashb1t}'",
+    "case ${FORK:-mashb1t} in",
+    "  mashb1t) REPO=mashb1t/Fooocus ;;",
+    "  ruined) REPO=runew0lf/RuinedFooocus ;;",
+    "  extended) REPO=shaitanzx/Fooocus_extend ;;",
+    "  mre) REPO=MoonRide303/Fooocus-MRE ;;",
+    "  *) echo 'Unknown fork. Use: mashb1t, ruined, extended, or mre' && exit 1 ;;",
+    "esac",
+    "echo 'Repository: $REPO'",
+    "COMMIT=$(git ls-remote https://github.com/$REPO HEAD | cut -f1)",
+    "echo 'Latest commit: $COMMIT'",
+    "docker build --build-arg FORK_REPO=$REPO --build-arg FORK_COMMIT=$COMMIT --build-arg FORK_NAME=${FORK:-mashb1t} -t vastai-fooocus-${FORK:-mashb1t}:local .",
+    "echo '✅ Fork build completed!'"
 ]

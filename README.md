@@ -345,12 +345,23 @@ The container automatically detects and uses TCMalloc for improved memory perfor
 
 ```
 vastai-fooocus-forks/
-├── Dockerfile                      # Single image with all components
+├── dockerfiles/                   # Modular Dockerfile architecture
+│   ├── base/                     # Shared base image (CUDA, services, deps)
+│   │   └── Dockerfile
+│   ├── mashb1t/                  # Fooocus Mashb1t fork
+│   │   └── Dockerfile
+│   ├── ruined/                   # RuinedFooocus fork
+│   │   └── Dockerfile
+│   ├── extended/                 # Fooocus Extended fork
+│   │   └── Dockerfile
+│   └── mre/                      # Fooocus MRE fork
+│       └── Dockerfile
+├── Dockerfile                      # Legacy single-image (DEPRECATED)
 ├── scripts/
 │   ├── start.sh                   # Main orchestrator script
 │   ├── services/                  # Modular service scripts
 │   │   ├── utils.sh              # Shared utilities (TCMalloc, workspace)
-│   │   ├── fooocus.sh            # Fooocus service
+│   │   ├── fooocus.sh            # Fooocus service (fork-aware)
 │   │   ├── filebrowser.sh        # File browser service
 │   │   ├── ttyd.sh               # Web terminal service
 │   │   ├── logdy.sh              # Log viewer service
@@ -370,6 +381,8 @@ vastai-fooocus-forks/
 │   └── test-provision-full.toml   # Full feature example
 ├── test_provision_local.sh        # Local testing script
 ├── .github/workflows/             # CI/CD workflows
+│   ├── build-forks.yml           # New modular build workflow
+│   └── build-matrix.yml          # Legacy workflow (DEPRECATED)
 └── .mise.toml                     # Task runner configuration
 ```
 
@@ -397,9 +410,14 @@ mise run status   # Check service status
 
 #### Building
 ```bash
-mise run build          # Build image
-mise run build-no-cache # Build without cache (for debugging)
-mise run build-prod     # Build production image for linux/amd64
+# New modular build system
+mise run build-base         # Build shared base image
+mise run build-fork-new     # Build specific fork (FORK=mashb1t mise run build-fork-new)
+
+# Legacy single-image builds
+mise run build              # Build legacy single image (DEPRECATED)
+mise run build-no-cache     # Build without cache (for debugging)
+mise run build-prod         # Build production image for linux/amd64
 ```
 
 #### Testing

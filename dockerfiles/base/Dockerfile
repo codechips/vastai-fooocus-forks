@@ -1,10 +1,7 @@
-# Multi-fork Fooocus Docker image with full services
+# Shared base for all Fooocus forks - contains common dependencies and services
 FROM nvidia/cuda:12.2.2-base-ubuntu22.04
 
-# Build arguments
-ARG FORK_REPO
-ARG FORK_COMMIT
-ARG FORK_NAME
+# Build arguments for metadata
 ARG DEBIAN_FRONTEND=noninteractive
 
 # Set shell with pipefail for safety
@@ -13,8 +10,7 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 # Environment variables
 ENV DEBIAN_FRONTEND=noninteractive \
     PIP_NO_CACHE_DIR=on \
-    SHELL=/bin/bash \
-    PYTHONPATH=/opt/fooocus/.venv/lib/python3.10/site-packages
+    SHELL=/bin/bash
 
 # Install system dependencies and uv in one layer, then clean up
 # hadolint ignore=DL3008
@@ -73,52 +69,6 @@ RUN if [ "$(uname -m)" = "x86_64" ]; then \
 RUN curl -fsSL https://raw.githubusercontent.com/filebrowser/get/master/get.sh | bash && \
     mkdir -p /workspace/logs /opt/fooocus /root/.config
 
-# Clone the specified fork (version-dependent layer)
-WORKDIR /opt
-RUN git clone https://github.com/${FORK_REPO}.git fooocus
-
-WORKDIR /opt/fooocus
-RUN git checkout ${FORK_COMMIT}
-
-# Create Python environment with uv (fast)
-# hadolint ignore=SC2015,DL3013
-RUN uv venv --seed --python 3.10 .venv && \
-    source .venv/bin/activate && \
-    # Install essential system packages needed for pip to function
-    pip install --upgrade pip setuptools wheel packaging && \
-    # Install PyTorch first (common across most forks)
-    # Skip PyTorch pre-install for MRE and RuinedFooocus as they have specific requirements
-    if [ "${FORK_REPO}" != "runew0lf/RuinedFooocus" ] && [ "${FORK_REPO}" != "MoonRide303/Fooocus-MRE" ]; then \
-        pip install torch==2.1.0 torchvision==0.16.0 torchaudio --index-url https://download.pytorch.org/whl/cu121; \
-    fi && \
-    # Install fork-specific requirements
-    if [ -f "requirements_docker.txt" ]; then \
-        echo "Installing from requirements_docker.txt..." && \
-        pip install -r requirements_docker.txt; \
-    fi && \
-    if [ -f "requirements_versions.txt" ]; then \
-        echo "Installing from requirements_versions.txt..." && \
-        pip install -r requirements_versions.txt && \
-        # Install PyTorch for MRE after requirements to avoid conflicts
-        if [ "${FORK_REPO}" = "MoonRide303/Fooocus-MRE" ]; then \
-            echo "Installing PyTorch for MRE..." && \
-            pip install torch==2.1.0 torchvision==0.16.0 torchaudio --index-url https://download.pytorch.org/whl/cu121; \
-        fi; \
-    elif [ -f "pip/modules.txt" ]; then \
-        echo "Installing from pip/modules.txt (RuinedFooocus)..." && \
-        pip install -r pip/modules.txt; \
-    elif [ -f "requirements.txt" ]; then \
-        echo "Installing from requirements.txt..." && \
-        pip install -r requirements.txt; \
-    else \
-        echo "Warning: No requirements file found!"; \
-    fi
-
-# Clean up build dependencies and cache
-RUN apt-get autoremove -y && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
 # Create required directories
 RUN mkdir -p /opt/bin /opt/provision /opt/nginx/html /opt/config
 
@@ -135,24 +85,14 @@ COPY config/nginx/html/ /opt/nginx/html/
 # Copy provision configurations
 COPY config/provision/ /opt/config/provision/
 
-# Capture fork commit SHA
-WORKDIR /opt/fooocus
-RUN git rev-parse HEAD > /root/BUILD_SHA.txt 2>/dev/null || echo "unknown" > /root/BUILD_SHA.txt
-
-# Configure filebrowser, set permissions, and final cleanup
+# Configure filebrowser and set permissions
 # hadolint ignore=SC2015
 RUN chmod +x /opt/bin/start.sh /opt/bin/services/*.sh /opt/provision/provision.py && \
-    # Capture build metadata
-    date -u +"%Y-%m-%dT%H:%M:%SZ" > /root/BUILDTIME.txt && \
-    echo "${FORK_NAME}" > /root/FORK_NAME.txt && \
     filebrowser config init && \
     filebrowser users add admin admin --perm.admin && \
     # Final cleanup
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
-    # Remove any remaining build artifacts
-    find /opt -name "*.pyc" -delete && \
-    find /opt -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Set environment variables
 ENV USERNAME=admin \
@@ -169,5 +109,4 @@ EXPOSE 80 8010 7010 7020 7030
 # Set working directory
 WORKDIR /workspace
 
-# Entrypoint
-ENTRYPOINT ["/opt/bin/start.sh"]
+# Base image doesn't define an entrypoint - fork images will do that

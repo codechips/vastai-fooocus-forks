@@ -1,0 +1,172 @@
+name: Build Fooocus Fork Images
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 2 * * *'  # Daily at 2 AM UTC
+  push:
+    branches: [ main ]
+    paths:
+      - 'dockerfiles/**'
+      - '.github/workflows/build-forks.yml'
+      - 'scripts/**'
+      - 'config/**'
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  # Build the shared base image first
+  build-base:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      base-digest: ${{ steps.build.outputs.digest }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata for base image
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ github.repository_owner }}/fooocus-base
+          tags: |
+            type=raw,value=latest
+            type=sha
+
+      - name: Build and push base image
+        id: build
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./dockerfiles/base/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha,scope=base
+          cache-to: type=gha,mode=max,scope=base
+          platforms: linux/amd64
+
+  # Build individual fork images
+  build-forks:
+    needs: build-base
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        fork:
+          - name: mashb1t
+            repo: mashb1t/Fooocus
+          - name: ruined
+            repo: runew0lf/RuinedFooocus
+          - name: extended
+            repo: shaitanzx/Fooocus_extend
+          - name: mre
+            repo: MoonRide303/Fooocus-MRE
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Get latest commit SHA for fork
+        id: commit
+        run: |
+          SHA=$(git ls-remote https://github.com/${{ matrix.fork.repo }} HEAD | cut -f1)
+          echo "sha=${SHA}" >> $GITHUB_OUTPUT
+          echo "short_sha=${SHA:0:7}" >> $GITHUB_OUTPUT
+
+      - name: Check if build needed
+        id: check
+        run: |
+          # For now, always build (we can add caching logic later if needed)
+          # Manual trigger or push events should always build
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ "${{ github.event_name }}" = "push" ]; then
+            echo "build=true" >> $GITHUB_OUTPUT
+            echo "Build needed (manual trigger or push event)"
+          else
+            # For scheduled runs, we could add more sophisticated logic here
+            echo "build=true" >> $GITHUB_OUTPUT
+            echo "Build needed (scheduled run)"
+          fi
+
+      - name: Set up Docker Buildx
+        if: steps.check.outputs.build == 'true'
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        if: steps.check.outputs.build == 'true'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        if: steps.check.outputs.build == 'true'
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ github.repository_owner }}/fooocus-${{ matrix.fork.name }}
+          tags: |
+            type=raw,value=latest
+            type=raw,value=${{ steps.commit.outputs.sha }}
+            type=raw,value=${{ steps.commit.outputs.short_sha }}
+
+      - name: Build and push fork image
+        if: steps.check.outputs.build == 'true'
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./dockerfiles/${{ matrix.fork.name }}/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            FORK_COMMIT=${{ steps.commit.outputs.sha }}
+            BASE_IMAGE=${{ env.REGISTRY }}/${{ github.repository_owner }}/fooocus-base:latest
+          cache-from: type=gha,scope=${{ matrix.fork.name }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.fork.name }}
+          platforms: linux/amd64
+
+
+  # Summary job
+  summary:
+    needs: [build-base, build-forks]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Build Summary
+        run: |
+          echo "## Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Component | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Base Image | ${{ needs.build-base.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Fork Images | ${{ needs.build-forks.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Available Images" >> $GITHUB_STEP_SUMMARY
+          echo "- \`ghcr.io/${{ github.repository_owner }}/fooocus-base:latest\`" >> $GITHUB_STEP_SUMMARY
+          echo "- \`ghcr.io/${{ github.repository_owner }}/fooocus-mashb1t:latest\`" >> $GITHUB_STEP_SUMMARY
+          echo "- \`ghcr.io/${{ github.repository_owner }}/fooocus-ruined:latest\`" >> $GITHUB_STEP_SUMMARY
+          echo "- \`ghcr.io/${{ github.repository_owner }}/fooocus-extended:latest\`" >> $GITHUB_STEP_SUMMARY
+          echo "- \`ghcr.io/${{ github.repository_owner }}/fooocus-mre:latest\`" >> $GITHUB_STEP_SUMMARY

@@ -1,0 +1,35 @@
+# RuinedFooocus fork - enhanced UI with modern Gradio
+ARG BASE_IMAGE=ghcr.io/codechips/fooocus-base:latest
+FROM ${BASE_IMAGE}
+
+# Clone RuinedFooocus fork
+WORKDIR /opt
+RUN git clone https://github.com/runew0lf/RuinedFooocus.git fooocus
+
+WORKDIR /opt/fooocus
+ARG FORK_COMMIT=main
+RUN git checkout ${FORK_COMMIT}
+
+# Create Python environment and install dependencies
+# hadolint ignore=SC2015,DL3013
+RUN uv venv --seed --python 3.10 .venv && \
+    source .venv/bin/activate && \
+    pip install --upgrade pip setuptools wheel packaging && \
+    # RuinedFooocus uses pip/modules.txt for dependencies
+    echo "Installing from pip/modules.txt..." && \
+    pip install -r pip/modules.txt
+
+# Set Python path for the virtual environment
+ENV PYTHONPATH=/opt/fooocus/.venv/lib/python3.10/site-packages
+
+# Capture build metadata
+RUN git rev-parse HEAD > /root/BUILD_SHA.txt 2>/dev/null || echo "unknown" > /root/BUILD_SHA.txt && \
+    date -u +"%Y-%m-%dT%H:%M:%SZ" > /root/BUILDTIME.txt && \
+    echo "ruined" > /root/FORK_NAME.txt
+
+# Clean up
+RUN find /opt -name "*.pyc" -delete && \
+    find /opt -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true
+
+# Entrypoint
+ENTRYPOINT ["/opt/bin/start.sh"]
