@@ -52,23 +52,7 @@ jobs:
       - name: Create build state directory
         run: mkdir -p build/state
 
-      - name: Check for upstream changes
-        id: check
-        run: |
-          echo "Checking upstream changes for ${{ matrix.name }} (${{ matrix.repo }})"
-          python scripts/check_upstream.py ${{ matrix.name }} ${{ matrix.repo }}
-          BUILD_NEEDED=$?
-          echo "Exit code: $BUILD_NEEDED"
-          echo "build=$BUILD_NEEDED" >> $GITHUB_OUTPUT
-
-      - name: Debug build decision
-        run: |
-          echo "Build needed: ${{ steps.check.outputs.build }}"
-          echo "Fork: ${{ matrix.name }}"
-          echo "Repo: ${{ matrix.repo }}"
-
       - name: Get latest commit SHA
-        if: steps.check.outputs.build == '0'
         id: commit
         run: |
           SHA=$(git ls-remote https://github.com/${{ matrix.repo }} HEAD | cut -f1)
@@ -76,11 +60,9 @@ jobs:
           echo "short_sha=${SHA:0:7}" >> $GITHUB_OUTPUT
 
       - name: Set up Docker Buildx
-        if: steps.check.outputs.build == '0'
         uses: docker/setup-buildx-action@v3
 
       - name: Log in to GitHub Container Registry
-        if: steps.check.outputs.build == '0'
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
@@ -99,7 +81,6 @@ jobs:
             type=raw,value=${{ steps.commit.outputs.short_sha }}
 
       - name: Build and push Docker image
-        if: steps.check.outputs.build == '0'
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -116,12 +97,11 @@ jobs:
           platforms: linux/amd64
 
       - name: Update build state
-        if: steps.check.outputs.build == '0'
         run: |
           echo "${{ steps.commit.outputs.sha }}" > build/state/${{ matrix.name }}.txt
           
       - name: Commit build state
-        if: steps.check.outputs.build == '0' && github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request'
         uses: EndBug/add-and-commit@v9
         with:
           add: 'build/state/${{ matrix.name }}.txt'
