@@ -55,8 +55,17 @@ jobs:
       - name: Check for upstream changes
         id: check
         run: |
+          echo "Checking upstream changes for ${{ matrix.name }} (${{ matrix.repo }})"
           python scripts/check_upstream.py ${{ matrix.name }} ${{ matrix.repo }}
-          echo "build=$?" >> $GITHUB_OUTPUT
+          BUILD_NEEDED=$?
+          echo "Exit code: $BUILD_NEEDED"
+          echo "build=$BUILD_NEEDED" >> $GITHUB_OUTPUT
+
+      - name: Debug build decision
+        run: |
+          echo "Build needed: ${{ steps.check.outputs.build }}"
+          echo "Fork: ${{ matrix.name }}"
+          echo "Repo: ${{ matrix.repo }}"
 
       - name: Get latest commit SHA
         if: steps.check.outputs.build == '0'
