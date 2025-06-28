@@ -1,0 +1,26 @@
+# Fooocus forks configuration
+# This file defines which Fooocus forks to build Docker images for
+
+forks:
+  - name: mashb1t
+    repo: mashb1t/Fooocus
+    description: "Popular fork with additional features and improvements"
+    
+  - name: ruined
+    repo: runew0lf/RuinedFooocus
+    description: "Enhanced UI and additional features by runew0lf"
+    
+  - name: extended
+    repo: shaitanzx/Fooocus_extend
+    description: "Extended functionality fork"
+    
+  - name: mre
+    repo: MoonRide303/Fooocus-MRE
+    description: "MoonRide303's enhanced version"
+
+# Build settings
+build:
+  platforms:
+    - linux/amd64
+  base_image: nvidia/cuda:12.2.2-base-ubuntu22.04
+  python_version: "3.10"
