@@ -25,7 +25,7 @@ jobs:
       packages: write
     steps:
       - name: Delete old container versions
-        uses: actions/delete-package-versions@v5
+        uses: actions/delete-package-versions@v4.1.1
         with:
           delete-only-untagged-versions: ${{ inputs.delete_untagged }}
           min-versions-to-keep: ${{ inputs.min_versions_to_keep }}

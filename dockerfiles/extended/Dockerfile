@@ -1,5 +1,6 @@
 # Fooocus Extended fork - comprehensive features with face analysis
 ARG BASE_IMAGE=ghcr.io/codechips/fooocus-base:latest
+# hadolint ignore=DL3006
 FROM ${BASE_IMAGE}
 
 # Clone Fooocus Extended fork

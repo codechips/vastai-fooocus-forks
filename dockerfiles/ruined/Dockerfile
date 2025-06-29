@@ -1,5 +1,6 @@
 # RuinedFooocus fork - enhanced UI with modern Gradio
 ARG BASE_IMAGE=ghcr.io/codechips/fooocus-base:latest
+# hadolint ignore=DL3006
 FROM ${BASE_IMAGE}
 
 # Clone RuinedFooocus fork

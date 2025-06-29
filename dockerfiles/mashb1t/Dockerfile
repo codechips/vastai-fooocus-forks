@@ -1,5 +1,6 @@
 # Fooocus Mashb1t fork - enhanced features with CV capabilities
 ARG BASE_IMAGE=ghcr.io/codechips/fooocus-base:latest
+# hadolint ignore=DL3006
 FROM ${BASE_IMAGE}
 
 # Clone Fooocus Mashb1t fork

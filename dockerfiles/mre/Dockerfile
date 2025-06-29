@@ -1,5 +1,6 @@
 # Fooocus MRE fork - minimal requirements edition
 ARG BASE_IMAGE=ghcr.io/codechips/fooocus-base:latest
+# hadolint ignore=DL3006
 FROM ${BASE_IMAGE}
 
 # Clone Fooocus MRE fork
