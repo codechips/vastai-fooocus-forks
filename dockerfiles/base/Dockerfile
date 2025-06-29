@@ -86,7 +86,7 @@ COPY config/nginx/html/ /opt/nginx/html/
 # hadolint ignore=SC2015
 RUN chmod +x /opt/bin/start.sh /opt/bin/services/*.sh /opt/provision/provision.py && \
     filebrowser config init && \
-    filebrowser users add admin admin --perm.admin && \
+    filebrowser users add admin adminpassword --perm.admin && \
     # Final cleanup
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
