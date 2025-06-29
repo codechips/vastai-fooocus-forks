@@ -1,13 +1,18 @@
 [tasks.build]
-description = "Build a Fooocus fork Docker image locally"
+description = "Build Fooocus images locally (new modular system)"
 run = [
-    "echo '🔥 Building Fooocus fork image...'",
-    "echo 'Note: This builds with default fork. Use build-fork for specific forks.'",
-    "docker build --build-arg FORK_REPO=mashb1t/Fooocus --build-arg FORK_COMMIT=main --build-arg FORK_NAME=mashb1t -t vastai-fooocus:local .",
+    "echo '🔥 Building Fooocus images using new modular system...'",
+    "echo ''",
+    "echo '1️⃣ Building base image...'",
+    "docker build -f dockerfiles/base/Dockerfile -t fooocus-base:local .",
+    "echo ''",
+    "echo '2️⃣ Building mashb1t fork (default)...'",
+    "docker build -f dockerfiles/mashb1t/Dockerfile --build-arg BASE_IMAGE=fooocus-base:local -t fooocus-mashb1t:local .",
     "echo '✅ Build completed successfully!'",
     "echo ''",
-    "echo '🚀 To test the image run: mise run test'",
-    "echo '🧹 To clean up run: mise run clean'"
+    "echo '🚀 To test: docker run -p 8010:8010 fooocus-mashb1t:local'",
+    "echo '🔧 To build other forks: FORK=mre mise run build-fork-new'",
+    "echo '🧹 To clean up: mise run clean'"
 ]
 
 [tasks.test]
@@ -232,19 +237,28 @@ run = [
 ]
 
 [tasks.lint]
-description = "Lint Dockerfile with hadolint"
+description = "Lint all Dockerfiles with hadolint"
 run = [
-    "echo '🔍 Linting Dockerfile with hadolint...'",
-    "hadolint Dockerfile",
+    "echo '🔍 Linting all Dockerfiles with hadolint...'",
+    "echo ''",
+    "for df in dockerfiles/*/Dockerfile; do",
+    "  echo \"Checking $df\"",
+    "  hadolint $df || true",
+    "  echo ''",
+    "done",
     "echo '✅ Dockerfile linting completed'"
 ]
 
 [tasks.lint-fix]
-description = "Lint Dockerfile and show detailed explanations"
+description = "Lint Dockerfiles and show detailed explanations"
 run = [
-    "echo '🔧 Linting Dockerfile with detailed explanations...'",
-    "hadolint --no-color Dockerfile || true",
+    "echo '🔧 Linting Dockerfiles with detailed explanations...'",
     "echo ''",
+    "for df in dockerfiles/*/Dockerfile; do",
+    "  echo \"=== $df ===\"",
+    "  hadolint --no-color $df || true",
+    "  echo ''",
+    "done",
     "echo '📖 For rule explanations visit: https://github.com/hadolint/hadolint/wiki'"
 ]
 

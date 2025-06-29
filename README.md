@@ -356,7 +356,6 @@ vastai-fooocus-forks/
 │   │   └── Dockerfile
 │   └── mre/                      # Fooocus MRE fork
 │       └── Dockerfile
-├── Dockerfile                      # Legacy single-image (DEPRECATED)
 ├── scripts/
 │   ├── start.sh                   # Main orchestrator script
 │   ├── services/                  # Modular service scripts
@@ -410,12 +409,12 @@ mise run status   # Check service status
 
 #### Building
 ```bash
-# New modular build system
-mise run build-base         # Build shared base image
+# Modular build system
+mise run build              # Build base + mashb1t fork (default)
+mise run build-base         # Build shared base image only
 mise run build-fork-new     # Build specific fork (FORK=mashb1t mise run build-fork-new)
 
-# Legacy single-image builds
-mise run build              # Build legacy single image (DEPRECATED)
+# Production builds  
 mise run build-no-cache     # Build without cache (for debugging)
 mise run build-prod         # Build production image for linux/amd64
 ```
