@@ -11,17 +11,17 @@ ARG FORK_COMMIT=main
 RUN git checkout ${FORK_COMMIT}
 
 # Create Python environment and install dependencies
-# hadolint ignore=SC2015,DL3013
+# hadolint ignore=SC2015,DL3013,DL3042,SC1091
 RUN uv venv --seed --python 3.10 .venv && \
     source .venv/bin/activate && \
     # Install pip 23.x for MRE compatibility (torchsde 0.2.5 has invalid metadata for pip 24+)
-    pip install --upgrade "pip<24.1" setuptools wheel packaging && \
+    pip install --no-cache-dir --upgrade "pip<24.1" setuptools wheel packaging && \
     # Install MRE requirements first (has specific versions)
     echo "Installing from requirements_versions.txt..." && \
-    pip install -r requirements_versions.txt && \
+    pip install --no-cache-dir -r requirements_versions.txt && \
     # Install PyTorch after to ensure compatibility
     echo "Installing PyTorch for MRE..." && \
-    pip install torch==2.1.0 torchvision==0.16.0 torchaudio --index-url https://download.pytorch.org/whl/cu121
+    pip install --no-cache-dir torch==2.1.0 torchvision==0.16.0 torchaudio --index-url https://download.pytorch.org/whl/cu121
 
 # Set Python path for the virtual environment
 ENV PYTHONPATH=/opt/fooocus/.venv/lib/python3.10/site-packages

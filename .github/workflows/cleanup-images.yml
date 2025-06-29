@@ -19,6 +19,7 @@ jobs:
       min_versions_to_keep: 3  # Keep fewer base images as they're large
     permissions:
       packages: write
+    secrets: inherit
 
   cleanup-mashb1t:
     name: Cleanup mashb1t fork images
@@ -29,6 +30,7 @@ jobs:
       min_versions_to_keep: 5
     permissions:
       packages: write
+    secrets: inherit
 
   cleanup-ruined:
     name: Cleanup ruined fork images
@@ -39,6 +41,7 @@ jobs:
       min_versions_to_keep: 5
     permissions:
       packages: write
+    secrets: inherit
 
   cleanup-extended:
     name: Cleanup extended fork images
@@ -49,6 +52,7 @@ jobs:
       min_versions_to_keep: 5
     permissions:
       packages: write
+    secrets: inherit
 
   cleanup-mre:
     name: Cleanup mre fork images
@@ -59,6 +63,7 @@ jobs:
       min_versions_to_keep: 5
     permissions:
       packages: write
+    secrets: inherit
 
   # Cleanup legacy images if they exist
   cleanup-legacy:
@@ -71,3 +76,4 @@ jobs:
       min_versions_to_keep: 2
     permissions:
       packages: write
+    secrets: inherit

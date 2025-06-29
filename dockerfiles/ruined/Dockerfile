@@ -11,13 +11,13 @@ ARG FORK_COMMIT=main
 RUN git checkout ${FORK_COMMIT}
 
 # Create Python environment and install dependencies
-# hadolint ignore=SC2015,DL3013
+# hadolint ignore=SC2015,DL3013,DL3042,SC1091
 RUN uv venv --seed --python 3.10 .venv && \
     source .venv/bin/activate && \
-    pip install --upgrade pip setuptools wheel packaging && \
+    pip install --no-cache-dir --upgrade pip setuptools wheel packaging && \
     # RuinedFooocus uses pip/modules.txt for dependencies
     echo "Installing from pip/modules.txt..." && \
-    pip install -r pip/modules.txt
+    pip install --no-cache-dir -r pip/modules.txt
 
 # Set Python path for the virtual environment
 ENV PYTHONPATH=/opt/fooocus/.venv/lib/python3.10/site-packages

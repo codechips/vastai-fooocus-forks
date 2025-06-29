@@ -11,19 +11,19 @@ ARG FORK_COMMIT=main
 RUN git checkout ${FORK_COMMIT}
 
 # Create Python environment and install dependencies
-# hadolint ignore=SC2015,DL3013
+# hadolint ignore=SC2015,DL3013,DL3042,SC1091
 RUN uv venv --seed --python 3.10 .venv && \
     source .venv/bin/activate && \
-    pip install --upgrade pip setuptools wheel packaging && \
+    pip install --no-cache-dir --upgrade pip setuptools wheel packaging && \
     # Install PyTorch first for optimal compatibility
-    pip install torch==2.1.0 torchvision==0.16.0 torchaudio --index-url https://download.pytorch.org/whl/cu121 && \
+    pip install --no-cache-dir torch==2.1.0 torchvision==0.16.0 torchaudio --index-url https://download.pytorch.org/whl/cu121 && \
     # Install from requirements_docker.txt (preferred for Docker builds)
     if [ -f "requirements_docker.txt" ]; then \
         echo "Installing from requirements_docker.txt..." && \
-        pip install -r requirements_docker.txt; \
+        pip install --no-cache-dir -r requirements_docker.txt; \
     else \
         echo "Installing from requirements_versions.txt..." && \
-        pip install -r requirements_versions.txt; \
+        pip install --no-cache-dir -r requirements_versions.txt; \
     fi
 
 # Set Python path for the virtual environment
