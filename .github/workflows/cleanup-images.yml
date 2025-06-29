@@ -64,16 +64,3 @@ jobs:
     permissions:
       packages: write
     secrets: inherit
-
-  # Cleanup legacy images if they exist
-  cleanup-legacy:
-    name: Cleanup legacy vastai-fooocus-plus images
-    uses: ./.github/workflows/delete-container-versions.yml
-    continue-on-error: true  # Don't fail if package doesn't exist
-    with:
-      package_name: 'vastai-fooocus-plus'
-      package_type: 'container'
-      min_versions_to_keep: 2
-    permissions:
-      packages: write
-    secrets: inherit
