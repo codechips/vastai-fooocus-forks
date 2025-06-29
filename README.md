@@ -389,61 +389,14 @@ vastai-fooocus-forks/
 ├── .github/workflows/             # CI/CD workflows
 │   ├── build-forks.yml           # New modular build workflow
 │   └── build-matrix.yml          # Legacy workflow (DEPRECATED)
-└── .mise.toml                     # Task runner configuration
 ```
 
 ## Local Development
 
 ### Prerequisites
 - [Docker](https://docs.docker.com/get-docker/)
-- [Mise](https://mise.jdx.dev/) task runner
 
 ### Quick Start
-```bash
-# Build and test everything
-mise run dev
-
-# Or step by step:
-mise run build    # Build image
-mise run test     # Start test container
-mise run status   # Check service status
-
-# Test provisioning system locally
-./test_provision_local.sh
-```
-
-### Available Mise Tasks
-
-#### Building
-```bash
-# Modular build system
-mise run build              # Build base + mashb1t fork (default)
-mise run build-base         # Build shared base image only
-mise run build-fork-new     # Build specific fork (FORK=mashb1t mise run build-fork-new)
-
-# Production builds  
-mise run build-no-cache     # Build without cache (for debugging)
-mise run build-prod         # Build production image for linux/amd64
-```
-
-#### Testing
-```bash
-mise run test           # Start test container
-mise run test-services  # Test services with curl
-mise run dev            # Full development workflow
-```
-
-#### Management
-```bash
-mise run status         # Check container and service status
-mise run logs           # Follow container logs
-mise run shell          # Get shell access to container
-mise run stop           # Stop test container
-mise run clean          # Clean up everything
-```
-
-### Manual Docker Commands
-If you prefer not to use Mise:
 ```bash
 # Build image
 docker build -t vastai-fooocus:local .
@@ -552,7 +505,7 @@ For production deployments or enhanced security:
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Test with `mise run dev`
+4. Test locally with Docker
 5. Submit a pull request
 
 ## License
