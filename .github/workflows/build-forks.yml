@@ -170,3 +170,6 @@ jobs:
           echo "- \`ghcr.io/${{ github.repository_owner }}/fooocus-ruined:latest\`" >> $GITHUB_STEP_SUMMARY
           echo "- \`ghcr.io/${{ github.repository_owner }}/fooocus-extended:latest\`" >> $GITHUB_STEP_SUMMARY
           echo "- \`ghcr.io/${{ github.repository_owner }}/fooocus-mre:latest\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Cleanup Policy" >> $GITHUB_STEP_SUMMARY
+          echo "Old images are automatically cleaned up weekly, keeping the 3-5 most recent versions." >> $GITHUB_STEP_SUMMARY
