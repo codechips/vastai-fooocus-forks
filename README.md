@@ -100,7 +100,7 @@ The fork images are built using GitHub Actions with a matrix strategy. Check the
 
 ## Model Provisioning
 
-The container includes an automated model provisioning system that can download models from multiple sources during startup.
+The container supports external model provisioning via `PROVISION_URL` that can download models from multiple sources during startup. Internal provisioning has been removed for simplicity.
 
 ### Environment Variables
 
@@ -378,6 +378,12 @@ vastai-fooocus-forks/
 │   ├── provision-config.toml      # Production template
 │   ├── test-provision-minimal.toml # Minimal test config
 │   └── test-provision-full.toml   # Full feature example
+├── provision-examples/            # External provisioning examples
+│   ├── basic-models.toml          # Essential models
+│   ├── comprehensive-models.toml  # Full-featured setup
+│   ├── flux-models.toml           # FLUX.1-dev setup
+│   ├── google-drive-example.toml  # Google Drive integration
+│   └── README.md                  # Provision examples documentation
 ├── test_provision_local.sh        # Local testing script
 ├── .github/workflows/             # CI/CD workflows
 │   ├── build-forks.yml           # New modular build workflow

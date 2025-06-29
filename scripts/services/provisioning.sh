@@ -4,17 +4,16 @@
 function run_provisioning() {
     # Check if external provisioning is enabled
     if [[ -z "${PROVISION_URL}" ]]; then
-        echo "provisioning: PROVISION_URL not set, skipping external model provisioning"
-        echo "provisioning: (internal model provisioning will run during FooocusPlus startup)"
+        echo "provisioning: PROVISION_URL not set, skipping model provisioning"
+        echo "provisioning: set PROVISION_URL to enable automatic model downloads"
         return
     fi
 
     echo "provisioning: starting external model provisioning"
     echo "provisioning: config URL: ${PROVISION_URL}"
-    echo "provisioning: this runs BEFORE internal model provisioning"
 
     # Run external provisioning script (uv will handle dependencies automatically)
-    echo "provisioning: downloading external models..."
+    echo "provisioning: downloading models..."
     if /opt/provision/provision.py "${PROVISION_URL}"; then
         echo "provisioning: external provisioning completed successfully"
     else

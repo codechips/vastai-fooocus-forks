@@ -70,7 +70,7 @@ RUN curl -fsSL https://raw.githubusercontent.com/filebrowser/get/master/get.sh |
     mkdir -p /workspace/logs /opt/fooocus /root/.config
 
 # Create required directories
-RUN mkdir -p /opt/bin /opt/provision /opt/nginx/html /opt/config
+RUN mkdir -p /opt/bin /opt/provision /opt/nginx/html
 
 # Copy configuration files and scripts (frequently changing layer)
 COPY config/filebrowser/filebrowser.json /root/.filebrowser.json
@@ -81,9 +81,6 @@ COPY scripts/provision/ /opt/provision/
 
 # Copy HTML templates directly to nginx directory
 COPY config/nginx/html/ /opt/nginx/html/
-
-# Copy provision configurations
-COPY config/provision/ /opt/config/provision/
 
 # Configure filebrowser and set permissions
 # hadolint ignore=SC2015

@@ -4,60 +4,6 @@
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/utils.sh"
 
-function provision_models() {
-    # Internal model provisioning - downloads essential FooocusPlus models
-    # Separate from external provisioning (PROVISION_URL) which runs earlier
-    local PROVISION_MARKER="/opt/fooocus/.models_provisioned"
-
-    if [[ ! -f "${PROVISION_MARKER}" ]] && [[ ! -f "/opt/fooocus/.models_provisioning" ]]; then
-        echo "fooocus: starting internal model provisioning via parallel downloads..."
-        echo "fooocus: downloading all essential FooocusPlus models"
-
-        # Create provisioning marker to prevent duplicate runs
-        touch /opt/fooocus/.models_provisioning
-
-        # Run model provisioning in background
-        (
-            # Navigate to provision directory
-            cd /opt/provision || exit 1
-
-            echo "fooocus: [Provisioning] downloading models in parallel..."
-
-            # Download essential models first
-            if uv run provision.py "${WORKSPACE}/provision/essential.toml"; then
-                echo "fooocus: [Provisioning] essential models downloaded successfully"
-            else
-                echo "fooocus: [Provisioning] WARNING: essential models download failed"
-            fi
-
-            # Download all models in parallel
-            if uv run provision.py "${WORKSPACE}/provision/models.toml"; then
-                echo "fooocus: [Provisioning] all models downloaded successfully"
-
-                # List what was downloaded
-                echo "fooocus: [Provisioning] downloaded models:"
-                tree -L 3 ${WORKSPACE}/fooocus/models/ 2>/dev/null | head -50 || ls -la ${WORKSPACE}/fooocus/models/
-
-                # Clean up provisioning marker and create completion marker
-                rm -f /opt/fooocus/.models_provisioning
-                touch "${PROVISION_MARKER}"
-                echo "fooocus: [Provisioning] parallel download completed successfully"
-            else
-                echo "fooocus: [Provisioning] ERROR: model downloads failed!"
-                rm -f /opt/fooocus/.models_provisioning
-                exit 1
-            fi
-
-        ) > ${WORKSPACE}/logs/provisioning.log 2>&1 &
-
-        echo "fooocus: model provisioning running in background (parallel downloads)"
-        echo "fooocus: check ${WORKSPACE}/logs/provisioning.log for progress"
-    elif [[ -f "/opt/fooocus/.models_provisioning" ]]; then
-        echo "fooocus: model provisioning already in progress"
-    else
-        echo "fooocus: models already provisioned (found marker file)"
-    fi
-}
 
 function start_fooocus() {
     echo "fooocus: starting Fooocus fork with pre-provisioned models"
@@ -77,33 +23,8 @@ function start_fooocus() {
     echo "fooocus: build dependencies installed - fork will handle all Python packages"
     echo "fooocus: (libgit2-dev, pkg-config, pygit2, and packaging already installed at build time)"
 
-    # Step 2: Copy provision configs to workspace for user visibility and control
-    echo "fooocus: setting up provision configs in workspace..."
-    if [ ! -d "${WORKSPACE}/provision" ]; then
-        mkdir -p "${WORKSPACE}/provision"
-        cp -r /opt/config/provision/* "${WORKSPACE}/provision/"
-        echo "fooocus: provision configs copied to ${WORKSPACE}/provision/"
-        echo "fooocus: users can edit configs at ${WORKSPACE}/provision/*.toml"
-    else
-        echo "fooocus: provision configs already exist in workspace"
-    fi
-
-    # Step 3: Pre-provision all models BEFORE starting Fooocus
-    echo "fooocus: provisioning models before Fooocus startup..."
-    if [ -f "/opt/provision/provision.py" ]; then
-        cd /opt/provision
-
-        # Download essential models first (prevents CLIP startup errors)
-        echo "fooocus: downloading essential models..."
-        uv run provision.py "${WORKSPACE}/provision/essential.toml" || echo "Warning: Essential model download failed"
-
-        # Run model provisioning (download all models in parallel)
-        provision_models
-
-        cd /opt/fooocus
-    else
-        echo "fooocus: provision script not found, skipping model download"
-    fi
+    # Note: Only external provisioning via PROVISION_URL is supported
+    # Internal provisioning has been removed for simplicity
 
     # All forks use port 7860 or 7865 by default, we'll override to 8010 to match expected port
     DEFAULT_ARGS="--listen 0.0.0.0 --port 8010"

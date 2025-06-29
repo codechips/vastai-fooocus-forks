@@ -1,0 +1,20 @@
+# Google Drive provision example - demonstrates using Google Drive URLs
+# Useful for sharing custom models or when downloading from Google Drive
+
+[models.checkpoints.custom-model]
+source = "url"
+url = "https://drive.google.com/file/d/1ABC123DEF456GHI789JKL/view?usp=sharing"
+filename = "custom-model.safetensors"
+# Google Drive sharing links are automatically converted to direct downloads
+
+[models.lora.custom-lora]
+source = "url"
+url = "https://drive.google.com/uc?id=1XYZ987WVU654TSR321PON"
+filename = "custom-style.safetensors"
+# Direct download links work too
+
+[models.checkpoints.large-model]
+source = "url"
+url = "https://drive.google.com/file/d/1LARGE_MODEL_ID/view"
+filename = "large-checkpoint.safetensors"
+# System handles Google's virus scan warnings for large files automatically

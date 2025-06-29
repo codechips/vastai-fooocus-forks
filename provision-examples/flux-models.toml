@@ -1,0 +1,31 @@
+# FLUX model provision example - for FLUX.1-dev model setup
+# Includes FLUX checkpoint, VAE, and text encoders
+
+[models.checkpoints.flux-dev]
+source = "huggingface"
+repo = "black-forest-labs/FLUX.1-dev"
+file = "flux1-dev.safetensors"
+gated = true  # Requires HuggingFace token and acceptance of terms
+
+[models.vae.flux-vae]
+source = "huggingface"
+repo = "black-forest-labs/FLUX.1-dev"
+file = "ae.safetensors"
+gated = true
+
+# Text encoders required for FLUX
+[models.text_encoder.clip_l]
+source = "huggingface"
+repo = "comfyanonymous/flux_text_encoders"
+file = "clip_l.safetensors"
+
+[models.text_encoder.t5xxl_fp8]
+source = "huggingface"
+repo = "comfyanonymous/flux_text_encoders"
+file = "t5xxl_fp8_e4m3fn.safetensors"
+
+# Optional: FLUX LoRAs
+[models.lora.flux-realism]
+source = "civitai"
+model_id = "618692"
+# Popular FLUX realism LoRA
