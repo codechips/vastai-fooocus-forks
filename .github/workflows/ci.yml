@@ -1,4 +1,4 @@
-# CI workflow for testing the provisioning system and other components
+# CI workflow for testing and linting
 name: CI
 
 on:
@@ -8,11 +8,50 @@ on:
     branches: [ main ]
 
 jobs:
-  test-provisioning:
+  lint-dockerfiles:
+    name: Lint Dockerfiles
     runs-on: ubuntu-latest
     
     steps:
-    - name: Check out the repository's code
+    - name: Check out code
+      uses: actions/checkout@v4
+      
+    - name: Lint base Dockerfile
+      uses: hadolint/hadolint-action@v3.1.0
+      with:
+        dockerfile: dockerfiles/base/Dockerfile
+        failure-threshold: warning
+
+    - name: Lint mashb1t Dockerfile
+      uses: hadolint/hadolint-action@v3.1.0
+      with:
+        dockerfile: dockerfiles/mashb1t/Dockerfile
+        failure-threshold: warning
+
+    - name: Lint ruined Dockerfile
+      uses: hadolint/hadolint-action@v3.1.0
+      with:
+        dockerfile: dockerfiles/ruined/Dockerfile
+        failure-threshold: warning
+
+    - name: Lint extended Dockerfile
+      uses: hadolint/hadolint-action@v3.1.0
+      with:
+        dockerfile: dockerfiles/extended/Dockerfile
+        failure-threshold: warning
+
+    - name: Lint mre Dockerfile
+      uses: hadolint/hadolint-action@v3.1.0
+      with:
+        dockerfile: dockerfiles/mre/Dockerfile
+        failure-threshold: warning
+
+  test-provisioning:
+    name: Test Provisioning System
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Check out code
       uses: actions/checkout@v4
       
     - name: Install uv
@@ -43,10 +82,22 @@ jobs:
                 except Exception as e:
                     print(f'❌ {toml_file} failed: {e}')
                     exit(1)
+        
+        # Test provision config files
+        for toml_file in glob.glob('config/provision/*.toml'):
+            print(f'Validating {toml_file}')
+            with open(toml_file, 'rb') as f:
+                try:
+                    config = tomli.load(f)
+                    print(f'✅ {toml_file} is valid')
+                except Exception as e:
+                    print(f'❌ {toml_file} failed: {e}')
+                    exit(1)
+                    
         print('All TOML files are valid!')
         "
         
-    - name: Test provisioning with minimal config
+    - name: Test provisioning dry run
       run: |
         # Create test workspace
         mkdir -p /tmp/test-workspace/fooocus/models/{checkpoints,loras,vae,controlnet,upscale_models,embeddings}
@@ -55,18 +106,22 @@ jobs:
         # Set environment variables
         export WORKSPACE="/tmp/test-workspace"
         
-        # Test dry run (just parsing and validation)
+        # Test dry run with minimal config
         timeout 60 ./scripts/provision/provision.py examples/test-provision-minimal.toml --dry-run || echo "Dry run test completed"
 
-  lint-dockerfile:
+  validate-scripts:
+    name: Validate Shell Scripts
     runs-on: ubuntu-latest
     
     steps:
-    - name: Check out the repository's code
+    - name: Check out code
       uses: actions/checkout@v4
       
-    - name: Lint Dockerfile
-      uses: hadolint/hadolint-action@v3.1.0
-      with:
-        dockerfile: Dockerfile
-        failure-threshold: warning
+    - name: Validate bash scripts
+      run: |
+        # Check syntax of all shell scripts
+        for script in scripts/*.sh scripts/services/*.sh; do
+          echo "Checking $script"
+          bash -n "$script" || exit 1
+        done
+        echo "All shell scripts have valid syntax!"
