@@ -1,6 +1,6 @@
 # Provision Script Examples
 
-This directory contains example TOML configuration files for the external model provisioning system. Only external provisioning via `PROVISION_URL` is supported.
+This directory contains example TOML configuration files for the model provisioning system via `PROVISION_URL`.
 
 ## Quick Start
 

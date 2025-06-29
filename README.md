@@ -100,7 +100,7 @@ The fork images are built using GitHub Actions with a matrix strategy. Check the
 
 ## Model Provisioning
 
-The container supports external model provisioning via `PROVISION_URL` that can download models from multiple sources during startup. Internal provisioning has been removed for simplicity.
+The container supports external model provisioning via `PROVISION_URL` that can download models from multiple sources during startup.
 
 ### Environment Variables
 
@@ -116,6 +116,7 @@ The container supports external model provisioning via `PROVISION_URL` that can 
 | `FOOOCUS_ARGS` | Additional arguments for Fooocus | Empty | No |
 | `FOOOCUS_AUTO_UPDATE` | Enable auto-update on startup (set to "True" to enable) | Empty | No |
 | `NO_ACCELERATE` | Disable accelerate optimization (enabled by default) | Empty | No |
+| `ENABLE_TTYD` | Enable web terminal access (security control) | `true` | No |
 
 ### Quick Provisioning Setup
 
@@ -465,14 +466,75 @@ The logdy interface (port 7030) provides real-time monitoring of:
 
 All logs are easily searchable through the logdy web interface.
 
-## Security Features
+## Security
 
-- **Unified authentication** across all services:
-  - Fooocus: Gradio built-in authentication
-  - Filebrowser: Native authentication
-  - ttyd terminal: Basic authentication
-- **Configurable credentials** via environment variables (USERNAME/PASSWORD)
-- **Simple, secure access** to all management tools
+### Authentication & Access Control
+
+- **Unified authentication** across all services via USERNAME/PASSWORD environment variables
+- **Fooocus**: Gradio built-in authentication with configurable credentials
+- **Filebrowser**: Native authentication, scoped to `/workspace` directory only
+- **TTYd terminal**: Basic authentication with full system access
+- **Logdy**: Log viewer access
+
+### Security Model
+
+**Root Access**: Services run as root for maximum compatibility with AI workflows and Vast.ai platform requirements. This enables:
+- GPU access and CUDA operations
+- System package installation for model dependencies  
+- Hardware optimization and driver management
+- Full compatibility with existing AI tools and workflows
+
+**Web Terminal Access**: TTYd provides web-based root shell access for:
+- Installing additional packages and dependencies
+- Debugging and troubleshooting
+- Advanced system configuration
+- Container management and monitoring
+
+### Security Controls
+
+| Control | Default | Description |
+|---------|---------|-------------|
+| `USERNAME` | `admin` | Authentication username for all services |
+| `PASSWORD` | `fooocus` | Authentication password for all services |
+| `ENABLE_TTYD` | `true` | Enable/disable web terminal access |
+
+### Production Security Recommendations
+
+For production deployments or enhanced security:
+
+```bash
+# Disable web terminal access
+-e ENABLE_TTYD=false
+
+# Use strong authentication credentials
+-e USERNAME=your_secure_username
+-e PASSWORD=your_strong_password
+
+# Restrict network access with firewall rules
+# Only expose necessary ports to trusted networks
+
+# Consider using a reverse proxy with additional authentication layers
+```
+
+### Risk Assessment
+
+**HIGH**: Web terminal provides full root system access
+- **Mitigation**: Set strong credentials, disable TTYD if not needed, use network restrictions
+
+**MEDIUM**: Services run with elevated privileges  
+- **Mitigation**: This is intentional for AI workload compatibility
+
+**LOW**: File browser access to workspace
+- **Mitigation**: Already scoped to `/workspace` directory only
+
+### Security Best Practices
+
+1. **Change default credentials** before deployment
+2. **Use strong passwords** for authentication
+3. **Disable TTYd** (`ENABLE_TTYD=false`) if terminal access not needed
+4. **Network isolation** - only expose ports to trusted networks
+5. **Regular updates** - keep base images and dependencies current
+6. **Monitor access logs** via the logdy interface (port 7030)
 
 ## Compatibility
 

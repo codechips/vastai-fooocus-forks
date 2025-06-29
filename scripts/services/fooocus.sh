@@ -23,8 +23,6 @@ function start_fooocus() {
     echo "fooocus: build dependencies installed - fork will handle all Python packages"
     echo "fooocus: (libgit2-dev, pkg-config, pygit2, and packaging already installed at build time)"
 
-    # Note: Only external provisioning via PROVISION_URL is supported
-    # Internal provisioning has been removed for simplicity
 
     # All forks use port 7860 or 7865 by default, we'll override to 8010 to match expected port
     DEFAULT_ARGS="--listen 0.0.0.0 --port 8010"

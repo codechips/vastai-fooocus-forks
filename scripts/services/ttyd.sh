@@ -2,6 +2,14 @@
 # TTYd web terminal service
 
 function start_ttyd() {
+    # Check if TTYd is enabled (default: true)
+    ENABLE_TTYD="${ENABLE_TTYD:-true}"
+    
+    if [[ "${ENABLE_TTYD}" != "true" ]]; then
+        echo "ttyd: disabled via ENABLE_TTYD environment variable"
+        return
+    fi
+
     echo "ttyd: starting web terminal"
 
     # Set up basic auth if password is provided
