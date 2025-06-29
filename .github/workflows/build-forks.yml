@@ -62,6 +62,13 @@ jobs:
           cache-to: type=gha,mode=max,scope=base
           platforms: linux/amd64
 
+      - name: Report base image info
+        run: |
+          echo "### Base Image Built" >> $GITHUB_STEP_SUMMARY
+          echo "Image: \`${{ env.REGISTRY }}/${{ github.repository_owner }}/fooocus-base:latest\`" >> $GITHUB_STEP_SUMMARY
+          echo "Digest: \`${{ steps.build.outputs.digest }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
   # Build individual fork images
   build-forks:
     needs: build-base
@@ -134,6 +141,7 @@ jobs:
 
       - name: Build and push fork image
         if: steps.check.outputs.build == 'true'
+        id: build
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -147,6 +155,25 @@ jobs:
           cache-from: type=gha,scope=${{ matrix.fork.name }}
           cache-to: type=gha,mode=max,scope=${{ matrix.fork.name }}
           platforms: linux/amd64
+
+      - name: Report image size
+        if: steps.check.outputs.build == 'true'
+        run: |
+          # Report size to build summary
+          echo "### Image Size for ${{ matrix.fork.name }}" >> $GITHUB_STEP_SUMMARY
+          
+          # Try to get size from build metadata
+          if [ -n "${{ steps.build.outputs.metadata }}" ]; then
+            echo "Build metadata available"
+          fi
+          
+          # Get image digest and size info
+          IMAGE="${{ env.REGISTRY }}/${{ github.repository_owner }}/fooocus-${{ matrix.fork.name }}:latest"
+          echo "Image: \`$IMAGE\`" >> $GITHUB_STEP_SUMMARY
+          echo "Commit: \`${{ steps.commit.outputs.short_sha }}\`" >> $GITHUB_STEP_SUMMARY
+          
+          # Note: Actual size will be visible in GitHub Packages UI
+          echo "" >> $GITHUB_STEP_SUMMARY
 
 
   # Summary job

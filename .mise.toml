@@ -283,6 +283,16 @@ run = [
     "echo '✅ Fork build completed!'"
 ]
 
+[tasks.size]
+description = "Check sizes of locally built images"
+run = [
+    "echo '📏 Checking local image sizes...'",
+    "echo ''",
+    "docker images | grep -E '(fooocus|vastai)' | awk '{printf \"%-40s %s\\n\", $1\":\"$2, $7}' | sort",
+    "echo ''",
+    "echo '💡 To see more details: docker images --no-trunc'"
+]
+
 [tasks.build-fork]
 description = "Build a specific Fooocus fork (LEGACY - usage: FORK=mashb1t mise run build-fork)"
 run = [
