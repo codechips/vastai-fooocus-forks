@@ -35,6 +35,9 @@ RUN git rev-parse HEAD > /root/BUILD_SHA.txt 2>/dev/null || echo "unknown" > /ro
     date -u +"%Y-%m-%dT%H:%M:%SZ" > /root/BUILDTIME.txt && \
     echo "mashb1t" > /root/FORK_NAME.txt
 
+# Copy fork-specific scripts (overwrites generic ones if needed)
+COPY scripts/ /opt/bin/
+
 # Clean up
 RUN find /opt -name "*.pyc" -delete && \
     find /opt -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true

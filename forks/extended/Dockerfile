@@ -1,11 +1,11 @@
-# RuinedFooocus fork - enhanced UI with modern Gradio
+# Fooocus Extended fork - comprehensive features with face analysis
 ARG BASE_IMAGE=ghcr.io/codechips/fooocus-base:latest
 # hadolint ignore=DL3006
 FROM ${BASE_IMAGE}
 
-# Clone RuinedFooocus fork
+# Clone Fooocus Extended fork
 WORKDIR /opt
-RUN git clone https://github.com/runew0lf/RuinedFooocus.git fooocus
+RUN git clone https://github.com/shaitanzx/Fooocus_extend.git fooocus
 
 WORKDIR /opt/fooocus
 ARG FORK_COMMIT=main
@@ -16,9 +16,16 @@ RUN git checkout ${FORK_COMMIT}
 RUN uv venv --seed --python 3.10 .venv && \
     source .venv/bin/activate && \
     pip install --no-cache-dir --upgrade pip setuptools wheel packaging && \
-    # RuinedFooocus uses pip/modules.txt for dependencies
-    echo "Installing from pip/modules.txt..." && \
-    pip install --no-cache-dir -r pip/modules.txt
+    # Install PyTorch first for optimal compatibility
+    pip install --no-cache-dir torch==2.1.0 torchvision==0.16.0 torchaudio --index-url https://download.pytorch.org/whl/cu121 && \
+    # Install from requirements_docker.txt (preferred for Docker builds)
+    if [ -f "requirements_docker.txt" ]; then \
+        echo "Installing from requirements_docker.txt..." && \
+        pip install --no-cache-dir -r requirements_docker.txt; \
+    else \
+        echo "Installing from requirements_versions.txt..." && \
+        pip install --no-cache-dir -r requirements_versions.txt; \
+    fi
 
 # Set Python path for the virtual environment
 ENV PYTHONPATH=/opt/fooocus/.venv/lib/python3.10/site-packages
@@ -26,7 +33,10 @@ ENV PYTHONPATH=/opt/fooocus/.venv/lib/python3.10/site-packages
 # Capture build metadata
 RUN git rev-parse HEAD > /root/BUILD_SHA.txt 2>/dev/null || echo "unknown" > /root/BUILD_SHA.txt && \
     date -u +"%Y-%m-%dT%H:%M:%SZ" > /root/BUILDTIME.txt && \
-    echo "ruined" > /root/FORK_NAME.txt
+    echo "extended" > /root/FORK_NAME.txt
+
+# Copy fork-specific scripts (overwrites generic ones if needed)
+COPY scripts/ /opt/bin/
 
 # Clean up
 RUN find /opt -name "*.pyc" -delete && \

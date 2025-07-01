@@ -8,6 +8,7 @@ on:
     branches: [ main ]
     paths:
       - 'dockerfiles/**'
+      - 'forks/**'
       - '.github/workflows/build-forks.yml'
       - 'scripts/**'
       - 'config/**'
@@ -145,7 +146,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./dockerfiles/${{ matrix.fork.name }}/Dockerfile
+          file: ./forks/${{ matrix.fork.name }}/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

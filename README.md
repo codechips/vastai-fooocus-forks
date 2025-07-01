@@ -346,17 +346,26 @@ The container automatically detects and uses TCMalloc for improved memory perfor
 
 ```
 vastai-fooocus-forks/
-├── dockerfiles/                   # Modular Dockerfile architecture
-│   ├── base/                     # Shared base image (CUDA, services, deps)
-│   │   └── Dockerfile
-│   ├── mashb1t/                  # Fooocus Mashb1t fork
-│   │   └── Dockerfile
-│   ├── ruined/                   # RuinedFooocus fork
-│   │   └── Dockerfile
-│   ├── extended/                 # Fooocus Extended fork
-│   │   └── Dockerfile
-│   └── mre/                      # Fooocus MRE fork
+├── dockerfiles/                   # Shared base Docker configuration
+│   └── base/                     # Shared base image (CUDA, services, deps)
 │       └── Dockerfile
+├── forks/                        # Fork-specific files and configurations
+│   ├── mashb1t/                  # Fooocus Mashb1t fork
+│   │   ├── Dockerfile            # Fork-specific Docker build
+│   │   └── scripts/services/     # Fork-specific service scripts
+│   │       └── fooocus.sh
+│   ├── ruined/                   # RuinedFooocus fork
+│   │   ├── Dockerfile
+│   │   └── scripts/services/
+│   │       └── fooocus.sh
+│   ├── extended/                 # Fooocus Extended fork
+│   │   ├── Dockerfile
+│   │   └── scripts/services/
+│   │       └── fooocus.sh
+│   └── mre/                      # Fooocus MRE fork
+│       ├── Dockerfile
+│       └── scripts/services/
+│           └── fooocus.sh
 ├── scripts/
 │   ├── start.sh                   # Main orchestrator script
 │   ├── services/                  # Modular service scripts

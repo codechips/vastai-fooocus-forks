@@ -25,25 +25,25 @@ jobs:
     - name: Lint mashb1t Dockerfile
       uses: hadolint/hadolint-action@v3.1.0
       with:
-        dockerfile: dockerfiles/mashb1t/Dockerfile
+        dockerfile: forks/mashb1t/Dockerfile
         failure-threshold: warning
 
     - name: Lint ruined Dockerfile
       uses: hadolint/hadolint-action@v3.1.0
       with:
-        dockerfile: dockerfiles/ruined/Dockerfile
+        dockerfile: forks/ruined/Dockerfile
         failure-threshold: warning
 
     - name: Lint extended Dockerfile
       uses: hadolint/hadolint-action@v3.1.0
       with:
-        dockerfile: dockerfiles/extended/Dockerfile
+        dockerfile: forks/extended/Dockerfile
         failure-threshold: warning
 
     - name: Lint mre Dockerfile
       uses: hadolint/hadolint-action@v3.1.0
       with:
-        dockerfile: dockerfiles/mre/Dockerfile
+        dockerfile: forks/mre/Dockerfile
         failure-threshold: warning
 
   test-provisioning:
