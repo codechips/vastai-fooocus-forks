@@ -37,8 +37,6 @@ RUN git rev-parse HEAD > /root/BUILD_SHA.txt 2>/dev/null || echo "unknown" > /ro
 # Copy fork-specific scripts (overwrites generic ones if needed)
 COPY scripts/ /opt/bin/
 
-# Set permissions for fork-specific scripts
-RUN chmod +x /opt/bin/services/*.sh
 
 # Clean up
 RUN find /opt -name "*.pyc" -delete && \
