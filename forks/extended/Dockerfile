@@ -5,11 +5,17 @@ FROM ${BASE_IMAGE}
 
 # Clone Fooocus Extended fork
 WORKDIR /opt
-RUN git clone https://github.com/shaitanzx/Fooocus_extend.git fooocus
+RUN git clone --depth=1 https://github.com/shaitanzx/Fooocus_extend.git fooocus
 
 WORKDIR /opt/fooocus
 ARG FORK_COMMIT=main
-RUN git checkout ${FORK_COMMIT}
+RUN if [ "${FORK_COMMIT}" != "main" ]; then \
+        echo "Fetching specific commit: ${FORK_COMMIT}" && \
+        git fetch --depth=1 origin ${FORK_COMMIT} && \
+        git checkout ${FORK_COMMIT}; \
+    else \
+        echo "Using main branch"; \
+    fi
 
 # Create Python environment and install dependencies
 # hadolint ignore=SC2015,DL3013,DL3042,SC1091

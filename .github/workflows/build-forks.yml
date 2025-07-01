@@ -99,9 +99,15 @@ jobs:
       - name: Get latest commit SHA for fork
         id: commit
         run: |
+          # Get the latest commit SHA from the remote repository
           SHA=$(git ls-remote https://github.com/${{ matrix.fork.repo }} HEAD | cut -f1)
+          if [ -z "$SHA" ]; then
+            echo "Failed to get commit SHA, using main branch"
+            SHA="main"
+          fi
           echo "sha=${SHA}" >> $GITHUB_OUTPUT
           echo "short_sha=${SHA:0:7}" >> $GITHUB_OUTPUT
+          echo "Using commit SHA: $SHA"
 
       - name: Check if build needed
         id: check
