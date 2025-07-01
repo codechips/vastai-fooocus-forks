@@ -12,7 +12,7 @@ from .core import ProvisioningSystem
 def main() -> None:
     """Main entry point for provisioning."""
     parser = argparse.ArgumentParser(
-        description="VastAI Fooocus Plus Provisioning System - Download models from various sources",
+        description="VastAI Fooocus Provisioning System - Download models from various sources",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:

@@ -1,6 +1,6 @@
-# Fooocus Plus Model Provisioning Configuration
+# Fooocus Model Provisioning Configuration
 # 
-# This configuration file demonstrates how to provision models for Fooocus Plus.
+# This configuration file demonstrates how to provision models for Fooocus.
 # You can specify models from HuggingFace, CivitAI, or direct URLs.
 #
 # Usage:

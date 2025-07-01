@@ -8,7 +8,7 @@
 # ]
 # ///
 """
-VastAI Fooocus Plus Provisioning System
+VastAI Fooocus Provisioning System
 
 Main entry point script for model provisioning.
 """

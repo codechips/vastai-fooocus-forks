@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Main orchestrator for VastAI Fooocus Plus container services
+# Main orchestrator for VastAI Fooocus container services
 
-# Simple process manager for Fooocus Plus and supporting services
+# Simple process manager for Fooocus and supporting services
 # Based on vastai-fooocus pattern with modular service architecture
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -19,7 +19,7 @@ source "$SERVICES_DIR/logdy.sh"
 source "$SERVICES_DIR/provisioning.sh"
 
 # Main execution
-echo "Starting VastAI Fooocus Plus container..."
+echo "Starting VastAI Fooocus container..."
 
 # Setup workspace
 setup_workspace

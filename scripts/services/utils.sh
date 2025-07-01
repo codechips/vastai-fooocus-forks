@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Shared utilities for VastAI Fooocus Plus services
+# Shared utilities for VastAI Fooocus services
 
 function prepare_tcmalloc() {
     if [[ "${OSTYPE}" == "linux"* ]] && [[ -z "${NO_TCMALLOC}" ]] && [[ -z "${LD_PRELOAD}" ]]; then
@@ -99,12 +99,12 @@ function wait_for_service() {
 function show_info() {
     echo ""
     echo "========================================="
-    echo "VastAI Fooocus Plus Container Started"
+    echo "VastAI Fooocus Container Started"
     echo "========================================="
     echo ""
     echo "Services:"
     echo "  - Landing Page: http://localhost:80 (service directory)"
-    echo "  - Fooocus Plus: http://localhost:8010"
+    echo "  - Fooocus: http://localhost:8010"
     echo "  - Filebrowser: http://localhost:7010"
     echo "  - Web Terminal: http://localhost:7020"
     echo "  - Log Viewer: http://localhost:7030"
@@ -113,7 +113,7 @@ function show_info() {
     echo ""
     echo "Logs:"
     echo "  - Nginx: ${WORKSPACE}/logs/nginx.log"
-    echo "  - Fooocus Plus: ${WORKSPACE}/logs/fooocus.log"
+    echo "  - Fooocus: ${WORKSPACE}/logs/fooocus.log"
     echo "  - Filebrowser: ${WORKSPACE}/logs/filebrowser.log"
     echo "  - TTYd: ${WORKSPACE}/logs/ttyd.log"
     echo "  - Logdy: ${WORKSPACE}/logs/logdy.log"
