@@ -53,22 +53,17 @@ function setup_workspace() {
     # Create log directory
     mkdir -p ${WORKSPACE}/logs
 
-    # Create Fooocus model directories if they don't exist
-    mkdir -p ${WORKSPACE}/fooocus/models/checkpoints
-    mkdir -p ${WORKSPACE}/fooocus/models/loras
-    mkdir -p ${WORKSPACE}/fooocus/models/vae
-    mkdir -p ${WORKSPACE}/fooocus/models/embeddings
-    mkdir -p ${WORKSPACE}/fooocus/models/hypernetworks
-    mkdir -p ${WORKSPACE}/fooocus/models/controlnet
-    mkdir -p ${WORKSPACE}/fooocus/models/upscale_models
-    mkdir -p ${WORKSPACE}/fooocus/models/inpaint
-    mkdir -p ${WORKSPACE}/fooocus/models/clip
-    mkdir -p ${WORKSPACE}/fooocus/models/clip_vision
-    mkdir -p ${WORKSPACE}/fooocus/models/diffusers
-    mkdir -p ${WORKSPACE}/fooocus/models/unet
-    mkdir -p ${WORKSPACE}/fooocus/models/prompt_expansion
-    mkdir -p ${WORKSPACE}/fooocus/models/llms
-    mkdir -p ${WORKSPACE}/fooocus/models/safety_checker
+    # Create Fooocus directory structure
+    mkdir -p ${WORKSPACE}/fooocus
+    
+    # Create symlink for models directory if it doesn't exist
+    if [ ! -L "${WORKSPACE}/fooocus/models" ]; then
+        # Create symlink to Fooocus models directory
+        ln -s "/opt/fooocus/models" "${WORKSPACE}/fooocus/models"
+        echo "Created symlink ${WORKSPACE}/fooocus/models -> /opt/fooocus/models"
+    fi
+    
+    # Create outputs directory
     mkdir -p ${WORKSPACE}/fooocus/outputs
 
     # Note: Models directory handled by --models-root argument in fooocus.sh
