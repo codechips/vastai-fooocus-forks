@@ -1,9 +1,9 @@
-# Fooocus Extended fork - comprehensive features with face analysis
+# Fooocus Extend fork - comprehensive features with face analysis
 ARG BASE_IMAGE=ghcr.io/codechips/fooocus-base:latest
 # hadolint ignore=DL3006
 FROM ${BASE_IMAGE}
 
-# Clone Fooocus Extended fork
+# Clone Fooocus Extend fork
 WORKDIR /opt
 RUN git clone --depth=1 https://github.com/shaitanzx/Fooocus_extend.git fooocus
 
@@ -39,7 +39,7 @@ ENV PYTHONPATH=/opt/fooocus/.venv/lib/python3.10/site-packages
 # Capture build metadata
 RUN git rev-parse HEAD > /root/BUILD_SHA.txt 2>/dev/null || echo "unknown" > /root/BUILD_SHA.txt && \
     date -u +"%Y-%m-%dT%H:%M:%SZ" > /root/BUILDTIME.txt && \
-    echo "extended" > /root/FORK_NAME.txt
+    echo "extend" > /root/FORK_NAME.txt
 
 # Copy fork-specific scripts (overwrites generic ones if needed)
 COPY scripts/ /opt/bin/
