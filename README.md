@@ -146,6 +146,17 @@ The container supports external model provisioning via `PROVISION_URL` that can 
      ghcr.io/codechips/vastai-fooocus-plus:latest
    ```
 
+### Provisioning Documentation
+
+For detailed information about the provisioning system, including:
+- Configuration format and examples
+- Model sources (HuggingFace, CivitAI, URLs)
+- Authentication setup
+- CivitAI version ID vs model ID clarification
+- Troubleshooting
+
+See the comprehensive [PROVISION.md](PROVISION.md) documentation.
+
 ### Manual Provisioning
 
 You can also run the provisioning script manually from inside the container:
@@ -160,142 +171,9 @@ cd /opt/bin
 # Provision from URL
 ./provision/provision.py https://example.com/config.toml
 
-# Dry run (validate without downloading)
-./provision/provision.py config.toml --dry-run
-
-# Override workspace directory
-./provision/provision.py config.toml --workspace /custom/path
-
 # Get help
 ./provision/provision.py --help
 ```
-
-### Supported Model Sources
-
-#### 1. HuggingFace Hub
-```toml
-[models.checkpoints.model-name]
-source = "huggingface"
-repo = "username/repository"
-file = "model.safetensors"
-gated = false  # Set to true for gated models (requires HF_TOKEN)
-```
-
-#### 2. CivitAI
-```toml
-[models.lora.model-name]
-source = "civitai"
-model_id = "12345"
-filename = "custom_name.safetensors"  # Optional
-```
-
-#### 3. Direct URLs (including Google Drive)
-```toml
-[models.vae.model-name]
-source = "url"
-url = "https://example.com/model.safetensors"
-filename = "model.safetensors"
-headers = { "Authorization" = "Bearer token" }  # Optional
-```
-
-#### 4. Google Drive URLs
-**Supported URL formats:**
-```toml
-# Google Drive sharing link
-[models.checkpoints.gdrive-model]
-source = "url"
-url = "https://drive.google.com/file/d/1ABC123DEF456/view?usp=sharing"
-filename = "custom-name.safetensors"
-
-# Direct Google Drive download (auto-converted)
-[models.lora.another-model]
-source = "url"
-url = "https://drive.google.com/uc?id=1ABC123DEF456"
-```
-
-**Features:**
-- **Automatic conversion** from sharing links to direct download URLs
-- **Virus scan bypass** - handles Google's "can't scan large files" warnings
-- **Works for both** model files and provision config files (`PROVISION_URL`)
-- **Example provision config**: `PROVISION_URL=https://drive.google.com/file/d/YOUR_ID/view`
-
-#### 5. Simple URL Format
-```toml
-[models.lora]
-simple-model = "https://example.com/model.safetensors"
-```
-
-#### 6. CLIP Text Encoders
-```toml
-[models.text_encoder.clip_l]
-source = "huggingface"
-repo = "comfyanonymous/flux_text_encoders"
-file = "clip_l.safetensors"
-
-[models.text_encoder.t5xxl_fp8]
-source = "huggingface"
-repo = "comfyanonymous/flux_text_encoders"
-file = "t5xxl_fp8_e4m3fn.safetensors"
-
-[models.text_encoder.openclip_vit_l14]
-source = "huggingface"
-repo = "zer0int/CLIP-GmP-ViT-L-14"
-file = "ViT-L-14-BEST-smooth-GmP-HF-format.safetensors"
-```
-
-#### 7. FLUX VAE
-```toml
-# Required for FLUX models
-[models.vae.flux-vae]
-source = "huggingface"
-repo = "black-forest-labs/FLUX.1-dev"
-file = "ae.safetensors"
-```
-
-### Model Categories and Directories
-
-| Category | Directory | Description |
-|----------|-----------|-------------|
-| `checkpoints` | `fooocus/models/checkpoints/` | Main model files |
-| `lora` | `fooocus/models/loras/` | LoRA adaptation files |
-| `vae` | `fooocus/models/vae/` | Variational Auto-Encoder models |
-| `controlnet` | `fooocus/models/controlnet/` | ControlNet models |
-| `esrgan` | `fooocus/models/upscale_models/` | Upscaling models |
-| `embeddings` | `fooocus/models/embeddings/` | Text embeddings |
-| `hypernetworks` | `fooocus/models/hypernetworks/` | Hypernetwork models |
-| `text_encoder` | `fooocus/models/text_encoder/` | CLIP and text encoder models |
-| `clip` | `fooocus/models/text_encoder/` | Alias for text_encoder |
-
-### Example Configurations
-
-- [**Minimal Example**](examples/test-provision-minimal.toml): Small test files for validation
-- [**Full Example**](examples/test-provision-full.toml): Comprehensive configuration with all features
-- [**FLUX Example**](examples/flux-provision.toml): Complete FLUX.1-dev setup with VAE and text encoders
-- [**Main Example**](examples/provision-config.toml): Production-ready configuration template
-
-### Local Testing
-
-Test the provisioning system locally:
-
-```bash
-# Run the test setup script
-./test_provision_local.sh
-
-# This creates a test environment at /tmp/vastai-fooocus-test
-# and provides commands to test different scenarios
-```
-
-### Troubleshooting
-
-**Common Issues:**
-
-1. **Authentication Errors**: Ensure `HF_TOKEN` and `CIVITAI_TOKEN` are set correctly
-2. **Gated Models**: Visit the HuggingFace model page and accept terms of service
-3. **Network Issues**: Check if URLs are accessible and not blocked
-4. **Disk Space**: Ensure adequate storage for model downloads
-5. **TOML Syntax**: Validate configuration with `--dry-run` option
-
-**Logs**: Check provisioning logs at `/workspace/logs/provision.log` or via the logdy interface (port 7030).
 
 ## Performance Optimization
 
