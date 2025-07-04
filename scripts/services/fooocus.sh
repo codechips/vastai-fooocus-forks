@@ -26,7 +26,7 @@ function start_fooocus() {
                 DEFAULT_ARGS="${DEFAULT_ARGS} --auth ${USERNAME}/${PASSWORD}"
                 echo "fooocus: RuinedFooocus authentication enabled via --auth argument"
                 ;;
-            "mashb1t"|"extended"|"mre"|*)
+            "mashb1t"|"extend"|"mre"|*)
                 # All other forks use auth.json file
                 cat > auth.json << EOF
 [

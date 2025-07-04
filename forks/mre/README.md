@@ -66,7 +66,7 @@ Optimized for Vast.ai's infrastructure with the same professional maintenance as
    -e OPEN_BUTTON_PORT=80
    -p 80:80 -p 8010:8010 -p 7010:7010 -p 7020:7020 -p 7030:7030
    ```
-4. **Launch in "Entrypoint" mode**
+4. **Launch in "Interactive shell server, SSH" or "Jupyter-python notebook + SSH" mode**
 5. **Click Open** to start creating
 
 Minimal setup, maximum creativity!
@@ -138,17 +138,26 @@ Essential monitoring:
 | --- | --- | --- |
 | `FOOOCUS_ARGS` | | Additional arguments |
 | `MINIMAL_MODE` | `true` | Keep it minimal |
-| `NO_ACCELERATE` | | Disable if issues |
+| `NO_ACCELERATE` | `true` | Disable if issues |
+
 
 ## Model Provisioning
 
 MRE supports the same automatic provisioning system:
 
+**Environment Variables:**
+```bash
+-e PROVISION_URL="https://drive.google.com/file/d/YOUR_FILE_ID/view"
+-e CIVITAI_TOKEN=your-civitai-token
+-e HF_TOKEN=your-huggingface-token
+```
+
+**Example Configuration:**
 ```toml
 # Efficient model selection
 [models.checkpoints]
 # Smaller, efficient models recommended
-dreamshaper-7 = { source = "civitai", model_id = "109123" }
+dreamshaper-7 = { source = "civitai", version_id = "109123" }
 
 [models.vae]
 # Essential VAE only

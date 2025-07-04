@@ -48,8 +48,8 @@ function start_nginx() {
         "ruined")
             DISPLAY_NAME="RuinedFooocus"
             ;;
-        "extended")
-            DISPLAY_NAME="Fooocus Extended"
+        "extend")
+            DISPLAY_NAME="Fooocus Extend"
             ;;
         "mre")
             DISPLAY_NAME="Fooocus MRE"

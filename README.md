@@ -56,7 +56,7 @@ This repository also builds and publishes Docker images for multiple popular Foo
 |------|--------------|-------------|
 | **mashb1t** | `ghcr.io/codechips/fooocus-mashb1t:latest` | Popular fork with additional features and improvements |
 | **RuinedFooocus** | `ghcr.io/codechips/fooocus-ruined:latest` | Enhanced UI and additional features |
-| **Fooocus Extend** | `ghcr.io/codechips/fooocus-extended:latest` | Extended functionality fork |
+| **Fooocus Extend** | `ghcr.io/codechips/fooocus-extend:latest` | Extended functionality fork |
 | **Fooocus MRE** | `ghcr.io/codechips/fooocus-mre:latest` | MoonRide303's enhanced version |
 
 ### Using Fork Images
@@ -236,7 +236,7 @@ vastai-fooocus-forks/
 │   │   ├── Dockerfile
 │   │   └── scripts/services/
 │   │       └── fooocus.sh
-│   ├── extended/                 # Fooocus Extended fork
+│   ├── extend/                   # Fooocus Extend fork
 │   │   ├── Dockerfile
 │   │   └── scripts/services/
 │   │       └── fooocus.sh

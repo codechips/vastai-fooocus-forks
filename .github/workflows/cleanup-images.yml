@@ -43,11 +43,11 @@ jobs:
       packages: write
     secrets: inherit
 
-  cleanup-extended:
-    name: Cleanup extended fork images
+  cleanup-extend:
+    name: Cleanup extend fork images
     uses: ./.github/workflows/delete-container-versions.yml
     with:
-      package_name: 'fooocus-extended'
+      package_name: 'fooocus-extend'
       package_type: 'container'
       min_versions_to_keep: 5
     permissions:

@@ -34,10 +34,10 @@ jobs:
         dockerfile: forks/ruined/Dockerfile
         failure-threshold: warning
 
-    - name: Lint extended Dockerfile
+    - name: Lint extend Dockerfile
       uses: hadolint/hadolint-action@v3.1.0
       with:
-        dockerfile: forks/extended/Dockerfile
+        dockerfile: forks/extend/Dockerfile
         failure-threshold: warning
 
     - name: Lint mre Dockerfile

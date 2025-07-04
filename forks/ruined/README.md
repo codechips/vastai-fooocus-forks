@@ -64,7 +64,7 @@ Built on Vast.ai's optimized infrastructure for reliable and consistent performa
    -e OPEN_BUTTON_PORT=80
    -p 80:80 -p 8010:8010 -p 7010:7010 -p 7020:7020 -p 7030:7030
    ```
-4. **Launch in "Entrypoint" mode**
+4. **Launch in "Interactive shell server, SSH" or "Jupyter-python notebook + SSH" mode**
 5. **Click Open** to access your modern AI art studio
 
 You're ready to create with the most user-friendly Fooocus interface!
@@ -135,7 +135,8 @@ Professional monitoring:
 | --- | --- | --- |
 | `FOOOCUS_ARGS` | | Additional launch arguments |
 | `FOOOCUS_AUTO_UPDATE` | | Enable automatic updates |
-| `NO_ACCELERATE` | | Disable acceleration |
+| `NO_ACCELERATE` | `true` | Disable acceleration |
+
 
 ## Model Provisioning
 
@@ -143,13 +144,20 @@ RuinedFooocus supports automatic model downloads on startup:
 
 1. Create a TOML configuration file
 2. Upload to GitHub, Google Drive, or any URL
-3. Set `PROVISION_URL` environment variable
+3. Add provisioning environment variables
 4. Models download automatically
 
-Quick example:
+**Environment Variables:**
+```bash
+-e PROVISION_URL="https://drive.google.com/file/d/YOUR_FILE_ID/view"
+-e CIVITAI_TOKEN=your-civitai-token
+-e HF_TOKEN=your-huggingface-token
+```
+
+**Example Configuration:**
 ```toml
 [models.checkpoints]
-dreamshaper-xl = { source = "civitai", model_id = "351306" }
+dreamshaper-xl = { source = "civitai", version_id = "351306" }
 
 [models.vae]
 sdxl-vae = { source = "huggingface", repo = "madebyollin/sdxl-vae-fp16-fix", file = "sdxl_vae.safetensors" }

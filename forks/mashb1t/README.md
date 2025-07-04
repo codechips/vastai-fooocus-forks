@@ -64,7 +64,7 @@ This container builds upon Vast.ai's reliable infrastructure, ensuring stable an
    -e OPEN_BUTTON_PORT=80
    -p 80:80 -p 8010:8010 -p 7010:7010 -p 7020:7020 -p 7030:7030
    ```
-4. **Launch in "Entrypoint" mode**
+4. **Launch in "Interactive shell server, SSH" or "Jupyter-python notebook + SSH" mode**
 5. **Access via the Open button** on your instance
 
 That's it! Your professional AI image generation studio is ready.
@@ -134,7 +134,8 @@ Real-time log monitoring:
 | --- | --- | --- |
 | `FOOOCUS_ARGS` | | Additional Fooocus launch arguments |
 | `NO_TCMALLOC` | | Disable TCMalloc optimization |
-| `NO_ACCELERATE` | | Disable HF Accelerate |
+| `NO_ACCELERATE` | `true` | Disable if issues |
+
 
 ### Advanced Options
 | Variable | Description |
@@ -148,16 +149,23 @@ This template includes an advanced provisioning system that automatically downlo
 
 1. Create a TOML configuration file with your models
 2. Host it on GitHub, Google Drive, or any web server
-3. Set `PROVISION_URL` to your config file URL
+3. Add provisioning environment variables to your instance
 4. Models download automatically when the instance starts
 
-Example configuration:
+**Environment Variables:**
+```bash
+-e PROVISION_URL="https://drive.google.com/file/d/YOUR_FILE_ID/view"
+-e CIVITAI_TOKEN=your-civitai-token
+-e HF_TOKEN=your-huggingface-token
+```
+
+**Example TOML Configuration:**
 ```toml
 [models.checkpoints]
 sdxl-base = { source = "huggingface", repo = "stabilityai/stable-diffusion-xl-base-1.0", file = "sd_xl_base_1.0.safetensors" }
 
 [models.lora]
-detail-enhancer = { source = "civitai", model_id = "135867" }
+detail-enhancer = { source = "civitai", version_id = "135867" }
 ```
 
 See [PROVISION.md](https://github.com/codechips/vastai-fooocus-forks/blob/main/PROVISION.md) for complete documentation.

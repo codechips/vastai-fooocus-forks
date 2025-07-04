@@ -1,23 +1,23 @@
 #!/usr/bin/env bash
-# Fooocus Extended fork service
+# Fooocus Extend fork service
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/utils.sh"
 
 
 function start_fooocus() {
-    echo "fooocus: starting Fooocus Extended fork with pre-provisioned models"
+    echo "fooocus: starting Fooocus Extend fork with pre-provisioned models"
     cd /opt/fooocus
     source .venv/bin/activate
 
-    # Extended fork uses port 7860 by default, we'll override to 8010 to match expected port
+    # Extend fork uses port 7860 by default, we'll override to 8010 to match expected port
     DEFAULT_ARGS="--listen 0.0.0.0 --port 8010"
 
-    # Handle authentication for Extended fork
+    # Handle authentication for Extend fork
     if [[ ${USERNAME} ]] && [[ ${PASSWORD} ]]; then
         echo "fooocus: enabling authentication for user: ${USERNAME}"
         
-        # Extended fork uses auth.json file
+        # Extend fork uses auth.json file
         cat > auth.json << EOF
 [
   {
@@ -26,7 +26,7 @@ function start_fooocus() {
   }
 ]
 EOF
-        echo "fooocus: auth.json created for Extended fork"
+        echo "fooocus: auth.json created for Extend fork"
         echo "fooocus: authentication enabled (works with --listen flag)"
     else
         echo "fooocus: starting without authentication (no USERNAME/PASSWORD set)"
@@ -63,7 +63,7 @@ EOF
         nohup python ${ENTRY_POINT} ${FULL_ARGS} >${WORKSPACE}/logs/fooocus.log 2>&1 &
     fi
 
-    echo "fooocus: Extended fork started on port 8010"
+    echo "fooocus: Extend fork started on port 8010"
     echo "fooocus: log file at ${WORKSPACE}/logs/fooocus.log"
 }
 

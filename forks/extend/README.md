@@ -1,4 +1,4 @@
-# Fooocus (Extended fork) - Ultimate AI Face & Image Processing
+# Fooocus (Extend fork) - Ultimate AI Face & Image Processing
 
 >The most comprehensive Fooocus fork with InsightFace integration and advanced face processing capabilities.
 >
@@ -17,11 +17,11 @@
 9. [Professional Features](#professional-features)
 10. [Support & Resources](#support--resources)
 
-## About Fooocus Extended
+## About Fooocus Extend
 
-This template provides **Fooocus Extended** - the ultimate fork for professional face processing and advanced image manipulation. Building upon mashb1t's features, this fork adds powerful InsightFace integration and comprehensive image processing tools.
+This template provides **Fooocus Extend** - the ultimate fork for professional face processing and advanced image manipulation. Building upon mashb1t's features, this fork adds powerful InsightFace integration and comprehensive image processing tools.
 
-**What makes Extended special:**
+**What makes Extend special:**
 - **InsightFace Integration**: State-of-the-art face analysis and manipulation
 - **Face Swapping**: Professional-grade face replacement
 - **Age & Gender Processing**: Advanced demographic modifications
@@ -67,7 +67,7 @@ Powered by Vast.ai's enterprise-grade infrastructure with automatic updates and 
    -e OPEN_BUTTON_PORT=80
    -p 80:80 -p 8010:8010 -p 7010:7010 -p 7020:7020 -p 7030:7030
    ```
-4. **Launch in "Entrypoint" mode**
+4. **Launch in "Interactive shell server, SSH" or "Jupyter-python notebook + SSH" mode**
 5. **Click Open** to access your professional AI studio
 
 Your comprehensive image processing suite is ready!
@@ -144,8 +144,16 @@ Enterprise monitoring:
 
 ## Model Provisioning
 
-Extended supports comprehensive model provisioning:
+Extend supports comprehensive model provisioning:
 
+**Environment Variables:**
+```bash
+-e PROVISION_URL="https://drive.google.com/file/d/YOUR_FILE_ID/view"
+-e CIVITAI_TOKEN=your-civitai-token
+-e HF_TOKEN=your-huggingface-token
+```
+
+**Example Configuration:**
 ```toml
 # Face processing models
 [models.insightface]
@@ -153,11 +161,11 @@ buffalo_l = { source = "huggingface", repo = "deepinsight/insightface", file = "
 
 # Standard models
 [models.checkpoints]
-realistic-vision = { source = "civitai", model_id = "245598" }
+realistic-vision = { source = "civitai", version_id = "245598" }
 
 # Face-specific LoRAs
 [models.lora]
-face-enhancer = { source = "civitai", model_id = "789012" }
+face-enhancer = { source = "civitai", version_id = "789012" }
 ```
 
 Complete guide: [PROVISION.md](https://github.com/codechips/vastai-fooocus-forks/blob/main/PROVISION.md)
@@ -240,6 +248,6 @@ for image in images:
 
 ---
 
-**Ready for professional-grade AI image processing?** Launch Fooocus Extended now and access the most comprehensive set of AI image and face manipulation tools available. With Vast.ai's powerful GPUs and Extended's complete feature set, you have everything needed for production workflows.
+**Ready for professional-grade AI image processing?** Launch Fooocus Extend now and access the most comprehensive set of AI image and face manipulation tools available. With Vast.ai's powerful GPUs and Extend's complete feature set, you have everything needed for production workflows.
 
 *Enterprise-grade template with professional maintenance and support. Your success is guaranteed.*
