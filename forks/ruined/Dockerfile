@@ -9,6 +9,7 @@ RUN git clone --depth=1 https://github.com/runew0lf/RuinedFooocus.git fooocus
 
 WORKDIR /opt/fooocus
 ARG FORK_COMMIT=main
+ARG REPO_COMMIT=unknown
 RUN if [ "${FORK_COMMIT}" != "main" ]; then \
         echo "Fetching specific commit: ${FORK_COMMIT}" && \
         git fetch --depth=1 origin ${FORK_COMMIT} && \
@@ -30,7 +31,7 @@ RUN uv venv --seed --python 3.10 .venv && \
 ENV PYTHONPATH=/opt/fooocus/.venv/lib/python3.10/site-packages
 
 # Capture build metadata
-RUN git rev-parse HEAD > /root/BUILD_SHA.txt 2>/dev/null || echo "unknown" > /root/BUILD_SHA.txt && \
+RUN echo "${REPO_COMMIT}" > /root/BUILD_SHA.txt && \
     date -u +"%Y-%m-%dT%H:%M:%SZ" > /root/BUILDTIME.txt && \
     echo "ruined" > /root/FORK_NAME.txt
 

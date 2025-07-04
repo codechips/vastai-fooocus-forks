@@ -69,9 +69,9 @@ function start_nginx() {
     fi
     
     # Replace placeholder variables in index.html footer
-    sed -i "s/GIT_SHA/${SHORT_SHA}/g" /opt/nginx/html/index.html
-    sed -i "s/BUILD_DATE/${BUILD_DATE}/g" /opt/nginx/html/index.html
-    sed -i "s|GITHUB_COMMIT_URL|${GITHUB_COMMIT_URL}|g" /opt/nginx/html/index.html
+    sed -i "s/{{GIT_SHA}}/${SHORT_SHA}/g" /opt/nginx/html/index.html
+    sed -i "s/{{BUILD_DATE}}/${BUILD_DATE}/g" /opt/nginx/html/index.html
+    sed -i "s|{{GITHUB_COMMIT_URL}}|${GITHUB_COMMIT_URL}|g" /opt/nginx/html/index.html
     
     # Replace fork name in the button
     sed -i "s/{{FORK_NAME}}/${DISPLAY_NAME}/g" /opt/nginx/html/index.html
