@@ -10,3 +10,6 @@ test-embedding = "https://huggingface.co/datasets/gsdf/EasyNegative/resolve/main
 [models.vae]
 # Small VAE for testing
 test-vae = { source = "huggingface", repo = "madebyollin/sdxl-vae-fp16-fix", file = "sdxl_vae.safetensors" }
+
+# Example CivitAI test (commented out)
+# test-lora = { source = "civitai", version_id = "135867" }

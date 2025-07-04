@@ -35,7 +35,7 @@ The provisioning system uses TOML format for configuration. Models are organized
 model-name = { source = "huggingface", repo = "...", file = "..." }
 
 [models.lora]
-another-model = { source = "civitai", model_id = "..." }
+another-model = { source = "civitai", version_id = "..." }
 
 [models.vae]
 vae-model = { source = "url", url = "https://..." }
@@ -76,28 +76,26 @@ embeddings-pack = {
 
 ### CivitAI Models
 
-Download models from CivitAI:
+Download models from CivitAI using the version ID:
 
 ```toml
 [models.checkpoints]
 # CivitAI model using version ID
-juggernaut-xl = { source = "civitai", model_id = "288982" }
+juggernaut-xl = { source = "civitai", version_id = "288982" }
 
 [models.lora]
 # Another CivitAI model
-detail-tweaker = { source = "civitai", model_id = "135867" }
+detail-tweaker = { source = "civitai", version_id = "135867" }
 ```
 
-**Important: Use Version ID, not Model ID!**
-- When browsing CivitAI, each model has multiple versions
-- Use the **version ID** from the URL: `?modelVersionId=288982`
-- Don't use the model ID from: `/models/133005`
+**Finding the Version ID:**
 
-**How to find the Version ID:**
-1. Go to the model page on civitai.com
-2. Select the specific version you want from the dropdown
-3. Look at the URL or click "Copy Link" on the download button
-4. Use the number after `modelVersionId=`
+1. **Navigate to the model page** on civitai.com
+2. **Select your desired version** from the version dropdown
+3. **Copy the Version ID** from the URL after `?modelVersionId=`
+
+Example: `https://civitai.com/models/133005?modelVersionId=288982`
+→ Use `version_id = "288982"`
 
 **Authentication**: Set `CIVITAI_TOKEN` environment variable for certain models.
 
@@ -170,7 +168,7 @@ sdxl-vae = {
 }
 
 [models.lora]
-detail-enhancer = { source = "civitai", model_id = "135867" }
+detail-enhancer = { source = "civitai", version_id = "135867" }
 ```
 
 ### FLUX Setup
@@ -212,7 +210,7 @@ t5xxl_fp8 = {
 # From HuggingFace
 sdxl = { source = "huggingface", repo = "stabilityai/stable-diffusion-xl-base-1.0", file = "sd_xl_base_1.0.safetensors" }
 # From CivitAI
-juggernaut = { source = "civitai", model_id = "288982" }
+juggernaut = { source = "civitai", version_id = "288982" }
 
 [models.embeddings]
 # Direct URL
@@ -239,7 +237,7 @@ easy-negative = { source = "url", url = "https://huggingface.co/datasets/gsdf/Ea
 ### Common Issues
 
 **"Model not found" errors**
-- Check the model/version ID is correct
+- Check the version ID is correct for CivitAI models
 - Ensure the model is public or you have proper authentication
 - Verify the category matches the model type
 

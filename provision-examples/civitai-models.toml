@@ -1,0 +1,12 @@
+[models.checkpoints.epicrealism-xl]
+source = "civitai"
+version_id = "1920523"
+
+[models.checkpoints.juggernaut-xl]
+source = "huggingface"
+repo = "RunDiffusion/Juggernaut-XL-v9"
+file = "Juggernaut-XL_v9_RunDiffusionPhoto_v2.safetensors"
+
+[models.checkpoints.dreamshaper-xl]
+source = "civitai"
+version_id = "351306"
