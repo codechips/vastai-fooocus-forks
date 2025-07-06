@@ -18,5 +18,5 @@ file = "sdxl_vae.safetensors"
 
 [models.lora.detail-tweaker]
 source = "civitai"
-model_id = "58390"
+version_id = "58390"
 # Popular LoRA for detail enhancement

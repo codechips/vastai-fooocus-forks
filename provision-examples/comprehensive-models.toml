@@ -14,7 +14,7 @@ file = "sd_xl_refiner_1.0.safetensors"
 
 [models.checkpoints.dreamshaper-xl]
 source = "civitai"
-model_id = "112902"
+version_id = "112902"
 # Popular general purpose model
 
 # VAE models
@@ -26,15 +26,15 @@ file = "sdxl_vae.safetensors"
 # LoRA models for style and detail enhancement
 [models.lora.detail-tweaker]
 source = "civitai"
-model_id = "58390"
+version_id = "58390"
 
 [models.lora.add-detail]
 source = "civitai"
-model_id = "87153"
+version_id = "87153"
 
 [models.lora.film-velvia]
 source = "civitai"
-model_id = "125703"
+version_id = "125703"
 
 # ControlNet models
 [models.controlnet.canny]

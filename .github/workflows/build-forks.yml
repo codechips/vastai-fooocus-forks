@@ -3,7 +3,7 @@ name: Build Fooocus Fork Images
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 2 * * *'  # Daily at 2 AM UTC
+    - cron: '0 2 * * 0'  # Weekly on Sunday at 2 AM UTC
   push:
     branches: [ main ]
     paths:
@@ -207,4 +207,35 @@ jobs:
           echo "- \`ghcr.io/${{ github.repository_owner }}/fooocus-mre:latest\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Cleanup Policy" >> $GITHUB_STEP_SUMMARY
-          echo "Old images are automatically cleaned up weekly, keeping the 3-5 most recent versions." >> $GITHUB_STEP_SUMMARY
+          echo "Old images are automatically cleaned up after each build, keeping the 3 most recent versions." >> $GITHUB_STEP_SUMMARY
+
+  # Cleanup old images after successful build
+  cleanup:
+    needs: [build-base, build-forks, summary]
+    runs-on: ubuntu-latest
+    if: success()
+    permissions:
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        package:
+          - name: fooocus-base
+            min_versions: 3
+          - name: fooocus-mashb1t
+            min_versions: 3
+          - name: fooocus-ruined
+            min_versions: 3
+          - name: fooocus-extend
+            min_versions: 3
+          - name: fooocus-mre
+            min_versions: 3
+    steps:
+      - name: Cleanup ${{ matrix.package.name }}
+        uses: actions/delete-package-versions@v4.1.1
+        with:
+          delete-only-untagged-versions: true
+          min-versions-to-keep: ${{ matrix.package.min_versions }}
+          package-name: ${{ matrix.package.name }}
+          package-type: container
+          token: ${{ secrets.GITHUB_TOKEN }}

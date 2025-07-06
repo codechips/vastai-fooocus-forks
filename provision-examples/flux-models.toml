@@ -27,5 +27,5 @@ file = "t5xxl_fp8_e4m3fn.safetensors"
 # Optional: FLUX LoRAs
 [models.lora.flux-realism]
 source = "civitai"
-model_id = "618692"
+version_id = "618692"
 # Popular FLUX realism LoRA

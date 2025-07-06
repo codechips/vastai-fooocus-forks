@@ -130,7 +130,7 @@ The container supports external model provisioning via `PROVISION_URL` that can 
 
    [models.lora.detail-tweaker]
    source = "civitai"
-   model_id = "58390"
+   version_id = "58390"
    ```
 
 2. **Host the configuration file** (GitHub, Google Drive, S3, HTTP server, etc.)
