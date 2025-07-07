@@ -82,11 +82,9 @@ COPY scripts/provision/ /opt/provision/
 # Copy HTML templates directly to nginx directory
 COPY config/nginx/html/ /opt/nginx/html/
 
-# Configure filebrowser and set permissions
+# Set permissions (filebrowser will be configured at runtime)
 # hadolint ignore=SC2015
 RUN chmod +x /opt/bin/start.sh /opt/bin/services/*.sh /opt/provision/provision.py && \
-    filebrowser config init && \
-    filebrowser users add admin adminpassword --perm.admin && \
     # Final cleanup
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
